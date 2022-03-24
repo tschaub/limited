@@ -1,4 +1,4 @@
-module github.com/tschaub/stopgap
+module github.com/tschaub/limited
 
 go 1.18
 

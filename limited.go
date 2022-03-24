@@ -1,4 +1,4 @@
-package stopgap
+package limited
 
 import (
 	"context"
@@ -10,19 +10,19 @@ import (
 // A Group is a collection of goroutines working on subtasks that are part of
 // the same overall task.
 //
-// (A zero Group is not valid, use the WithContextLimit function.)
+// (A zero Group is not valid, use the WithContext function.)
 type Group struct {
 	sem   *semaphore.Weighted
 	group *errgroup.Group
 	ctx   context.Context
 }
 
-// WithContextLimit returns a new Group and an associated Context derived from ctx.
+// WithContext returns a new Group and an associated Context derived from ctx.
 //
 // The derived Context is canceled the first time a function passed to Go
 // returns a non-nil error or the first time Wait returns, whichever occurs
 // first.  No more than limit goroutines will be created at a time.
-func WithContextLimit(ctx context.Context, limit int64) (*Group, context.Context) {
+func WithContext(ctx context.Context, limit int64) (*Group, context.Context) {
 	group, groupCtx := errgroup.WithContext(ctx)
 	sem := semaphore.NewWeighted(limit)
 	return &Group{

@@ -1,4 +1,4 @@
-package stopgap_test
+package limited_test
 
 import (
 	"context"
@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tschaub/stopgap"
+	"github.com/tschaub/limited"
 )
 
-func TestWithContextLimit(t *testing.T) {
+func TestWithContext(t *testing.T) {
 	limit := 10
 	max := 0
 
@@ -27,7 +27,7 @@ func TestWithContextLimit(t *testing.T) {
 		}
 	}()
 
-	group, _ := stopgap.WithContextLimit(context.Background(), int64(limit))
+	group, _ := limited.WithContext(context.Background(), int64(limit))
 	for i := 0; i < limit*10; i++ {
 		err := group.Go(func() error {
 			running <- 1
@@ -51,7 +51,7 @@ func TestWithContextLimit(t *testing.T) {
 
 func TestWithContextCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
-	group, groupCtx := stopgap.WithContextLimit(ctx, 1)
+	group, groupCtx := limited.WithContext(ctx, 1)
 
 	expectedErr := errors.New("custom")
 	err := group.Go(func() error {
@@ -68,14 +68,14 @@ func TestWithContextCancel(t *testing.T) {
 	}
 }
 
-func TestWithContextLimitCancel(t *testing.T) {
+func TestWithContextLimit(t *testing.T) {
 	limit := int64(10)
 	started := int64(0)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	custom := errors.New("custom")
-	group, _ := stopgap.WithContextLimit(ctx, limit)
+	group, _ := limited.WithContext(ctx, limit)
 	var err error
 	for i := int64(0); i < limit*10; i++ {
 		err = group.Go(func() error {
@@ -106,11 +106,11 @@ func TestWithContextLimitCancel(t *testing.T) {
 	}
 }
 
-func TestWithContextLimitError(t *testing.T) {
+func TestWithContextError(t *testing.T) {
 	limit := int64(10)
 	custom := errors.New("custom")
 
-	group, _ := stopgap.WithContextLimit(context.Background(), limit)
+	group, _ := limited.WithContext(context.Background(), limit)
 	var err error
 	for i := int64(0); i < limit*10; i++ {
 		err = group.Go(func() error {
