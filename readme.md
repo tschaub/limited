@@ -1,0 +1,1 @@
+This package provides utilities for spawning a limited number of goroutines.  It is intended to provide a stop-gap solution until the [golang.org/x/sync/errgroup](https://pkg.go.dev/golang.org/x/sync/errgroup) provides similar functionality (see https://github.com/golang/go/issues/27837).
