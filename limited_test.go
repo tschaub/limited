@@ -27,7 +27,7 @@ func TestWithContext(t *testing.T) {
 		}
 	}()
 
-	group, _ := limited.WithContext(context.Background(), int64(limit))
+	group, _ := limited.WithContext(context.Background(), limit)
 	for i := 0; i < limit*10; i++ {
 		err := group.Go(func() error {
 			running <- 1
@@ -69,7 +69,7 @@ func TestWithContextCancel(t *testing.T) {
 }
 
 func TestWithContextLimit(t *testing.T) {
-	limit := int64(10)
+	limit := 10
 	started := int64(0)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -77,10 +77,10 @@ func TestWithContextLimit(t *testing.T) {
 	custom := errors.New("custom")
 	group, _ := limited.WithContext(ctx, limit)
 	var err error
-	for i := int64(0); i < limit*10; i++ {
+	for i := 0; i < limit*10; i++ {
 		err = group.Go(func() error {
 			atomic.AddInt64(&started, 1)
-			if atomic.LoadInt64(&started) >= limit {
+			if atomic.LoadInt64(&started) >= int64(limit) {
 				cancel()
 				return custom
 			}
@@ -101,18 +101,18 @@ func TestWithContextLimit(t *testing.T) {
 		t.Errorf("expected context canceled error, got %v", err)
 	}
 
-	if started != limit {
+	if started != int64(limit) {
 		t.Errorf("expected a limit of %d, got %d", limit, started)
 	}
 }
 
 func TestWithContextError(t *testing.T) {
-	limit := int64(10)
+	limit := 10
 	custom := errors.New("custom")
 
 	group, _ := limited.WithContext(context.Background(), limit)
 	var err error
-	for i := int64(0); i < limit*10; i++ {
+	for i := 0; i < limit*10; i++ {
 		err = group.Go(func() error {
 			time.Sleep(10 * time.Millisecond)
 			if i > limit {

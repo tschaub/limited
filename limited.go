@@ -22,9 +22,9 @@ type Group struct {
 // The derived Context is canceled the first time a function passed to Go
 // returns a non-nil error or the first time Wait returns, whichever occurs
 // first.  No more than limit goroutines will be created at a time.
-func WithContext(ctx context.Context, limit int64) (*Group, context.Context) {
+func WithContext(ctx context.Context, limit int) (*Group, context.Context) {
 	group, groupCtx := errgroup.WithContext(ctx)
-	sem := semaphore.NewWeighted(limit)
+	sem := semaphore.NewWeighted(int64(limit))
 	return &Group{
 		sem:   sem,
 		group: group,
